@@ -1,0 +1,1366 @@
+<h1>By Anish Patil in 10/25/2020</h1>
+<style>
+	.block, .evalblock, .needprog{
+    display: inline-block;
+		background-color: orange;
+		border: 3px solid orange;
+		font-family: Charcoal, sans-serif;
+		color: white;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size:20px;
+    border-style:outset;
+    box-shadow: 3px 3px 0px 0px black;
+	}
+  .needprog{
+    background-color: rgb(0, 255, 0);
+    border: 3px solid rgb(0, 255, 0);
+    margin-top: 20px;
+    border-style:outset;
+  }
+  .prog{
+    border: 3px solid rgb(0, 255, 0);
+    background-color: white;
+    min-height: 20px;
+    border-style:ridge;
+  }
+  .evalblock{
+    background-color: purple;
+    border: 3px solid purple;
+    contenteditable: "false";
+    margin-top: 1px;
+    border-style:outset;
+  }
+  .input{
+    border-radius: 5px;
+    postion: relative;
+    display: inline-block;
+    border: 5px solid white;
+    background-color: white;
+    color: black;
+    max-width: 90em;
+    min-width: 5px;
+    }
+  .codepush{
+    float: right;
+    width: 20%;
+    height: 90%;
+    overflow-x: auto;
+    margin-top: 20%;
+    right:1px;
+    position: absolute;
+  }
+  .spare{
+    float: right;
+    width: 20%;
+    height: 90%;
+    overflow-x: auto:
+  }
+  #code{
+    margin-bottom: 0px;
+    overflow: auto;
+    height: 90%;
+    width: 45%;
+    border: 3px solid black;
+    margin-top: 1px;
+    margin-left: 10px;
+  }
+  #madeBlocks{
+    float: left;
+    font-family: Charcoal, sans-serif;
+    font-size:30px;
+  }
+  .optmenutop{
+    background-color: rgb(0, 255, 0);
+    float: right;
+    border-width: 1px;
+  }
+  #output{
+    width: 50%;
+    height: 90%;
+    float: right;
+  }
+  #menu{
+    font-family: Charcoal, sans-serif;
+    margin-bottom: 0px;
+    position: absolute;
+    top: 50%;
+    width: 200px;
+    display: none;
+  }
+  .menubutton{
+    border: 1px solid rgb(200, 200, 200);
+    font-size: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    align-items: center;
+    justify-content: center;
+    border-bottom: solid 1px #dfdfdf;
+  }
+  .menubutton:hover{
+    background-color: rgb(230, 230, 230);
+  }
+  .name{
+    display: inline-block;
+    vertical-align: top;
+  }
+  #images{
+    border: 1px solid red;
+    float: right;
+  }
+  .leftblocks{
+    overflow-y: scroll;
+    height: 90%;
+  }
+  ::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: red; 
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b30000; 
+}
+img{
+    margin-bottom: 22px;
+    max-height: 15%;
+    max-width: 15%;
+    margin: 10px 20 10px 20;
+}
+#imgview{
+  postion: absolute;
+  border: 1px solid black;
+  margin-bottom: 22px;
+  max-height: 15%;
+  max-width: 15%;
+  display: none;
+}
+.filechooseopt{
+  position: absolute;
+  top: 50%;
+  text-align: center;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: gray;
+}
+.filechoose{
+  font-size: 30px;
+}
+#result{
+  float: right;
+  background-color: white;
+}
+#framepush{
+  height: 50%;
+  float: right;
+  width: 50%;
+  border: 1px solid black;
+  margin-top: 100px;
+}
+#result{
+  width: 35%;
+  height: 35%;
+}
+#fullscreen{
+  float: right;
+}
+</style>
+<script>
+  setInterval(
+    function(){
+      inputs = document.getElementById("code").getElementsByClassName("input");
+      for(let inputa = 0;inputa<inputs.length; inputa++){
+        if(inputs[inputa].innerHTML.indexOf("<br>")!=-1){
+          inputs[inputa].innerHTML = inputs[inputa].innerHTML.replace(/<br>/g, "");
+        }
+        if(inputs[inputa].children[0]){
+          if(inputs[inputa].children[0].className == ""){
+            console.log("f")
+            inputs[inputa].innerText=inputs[inputa].innerText;
+            console.log(inputs[inputa].children[0])
+            inputs[inputa].focus();
+            document.execCommand('selectAll', false, null);
+            document.getSelection().collapseToEnd();
+          }
+        }
+      }
+    }
+  , 700)
+</script>
+<button id = "run" onclick = "run()" class = "optmenutop">Run</button>
+<button id = "run" onclick = "openfileclick()" class = "optmenutop">Open</button>
+<button id = "run" onclick = "save()" class = "optmenutop">Save</button>
+<br><br>
+<div class="leftblocks" id = "madeBlocks">
+  Blocks<br>
+</div>
+<img id = "imgview">
+<div id = "menu">
+  <button class = "menubutton" onclick = "removeblock()">
+    Delete
+  </button>
+  <button class = "menubutton" onclick = "moveDown()">
+    Move To Bottom
+  </button>
+  <button class = "menubutton" onclick = "moveUp()">
+    Move To Top
+  </button>
+  <button class = "menubutton" onclick = "moveOneUp()">
+    Move One Block Up
+  </button>
+  <button class = "menubutton" onclick = "moveOneDown()">
+    Move One Block Down
+  </button>
+  <button class = "menubutton" onclick = "duplicate()">
+    Duplicate
+  </button>
+</div>
+<div id = "fullscreen" onclick = "requestfullScreen()" style = "font-size: 50px">
+⛶
+</div><br><br><br><br>
+<script>
+  function requestfullScreen(){
+    closewin = document.createElement("div");
+    closewin.innerHTML = "✖";
+    console.log(closewin)
+    document.body.appendChild(closewin);
+    document.getElementById("result").style.top = "32%";
+    document.getElementById("result").style.left = "32%";
+    document.getElementById("result").style.position = "absolute";
+    width = window.innerWidth;
+    height = window.innerHeight;
+    scale = Math.min(width/document.getElementById("result").offsetWidth, height/document.getElementById("result").offsetHeight);
+    document.getElementById("result").style.transform = 'scale(' + scale + ')';
+    document.getElementById("result").style.zIndex = "5" 
+    closewin.style.zIndex = "50";
+    closewin.style.position = "absolute";
+    closewin.style.top = "1px"
+    closewin.style.left = "96%"
+    closewin.style.fontSize = "50"
+    closewin.onclick = function(){
+      document.getElementById("result").style.transform = "scale(1, 1)";
+      document.getElementById("result").style.position = "initial";
+      closewin.innerHTML = ""
+    }
+  }
+</script>
+<div id = "resultdiv">
+<iframe id = "result"></iframe><br>
+</div>
+<div class = "codepush">
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/d485f5620d2dde69a6aa1cda7c897d12.svg/get/">
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/b5f989e21b56af371209369c331b821e.svg/get/">  
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/316a67c9e966fd015b4538f54be456db.svg/get/">
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/7799f2848136d11f48ca5f3105d336ef.svg/get/">
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/80abbc427366bca477ccf1ef0faf240a.svg/get/">
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/f7cdd2acbc6d7559d33be8675059c79e.svg/get/">
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/862488bf66b67c5330cae9235b853b6e.svg/get">
+  <br>
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/1e8a70bd07f1dcba3383883f3b948266.png/get/">
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/9b020b8c7cb6a9592f7303add9441d8f.png/get/">
+  <img src = "https://cdn.assets.scratch.mit.edu/internalapi/asset/d3344650f594bcecdf46aa4a9441badd.svg/get/">
+</div>
+
+<div id = "code" onclick =  "codeclick()"></div>
+<script>
+function codeclick(){
+  try{
+      progfocus.style.border="5px ridge white";
+  }
+  catch(e){}
+  progfocus = code;
+  console.log(progfocus)
+  progfocus.style.border="5px ridge rgb(0, 25, 255)";
+      }
+</script>
+<script>
+  function savefile(){
+    document.body.removeChild(savemenu);
+    codesave = document.getElementById("code").innerHTML;
+    localStorage["file$"+saveinput.value]=codesave;
+  }
+  function save(){
+    try{
+      document.body.removeChild(filemenu);
+    }
+    catch(e){}
+    try{
+      document.body.removeChild(savemenu);
+    }
+    catch(e){}
+    savemenu = document.createElement("div");
+    savemenu.className = "filechooseopt"
+    saveinput = document.createElement("input");
+    saveinput.className = "filechoose"
+    savemenu.appendChild(saveinput);
+    saveclick = document.createElement("button");
+    saveclick.innerHTML = "save"
+    saveclick.onclick = function(){savefile()}
+    saveclick.className = "filechoose"
+    savemenu.appendChild(saveclick);
+    document.body.appendChild(savemenu)
+  }
+  setTimeout(function(){
+    imgs = document.getElementsByTagName("img")
+    for(let i = 0; i < imgs.length; i++){
+      imgs[i].onclick = function(){
+        variableinputfocus.innerText = this.src;
+      }
+    }
+  }, 100);
+  function applyformat(){
+    progneedblocks = document.getElementById("code").getElementsByClassName("prog");
+      for(progi=0;progi<progneedblocks.length;progi++){
+        progneedblocks[progi].onclick = function(){
+          event.stopPropagation();
+          event.preventDefault();
+          console.log(this)
+          try{
+            if(progfocus!=code){
+              progfocus.style.border="5px ridge rgb(0, 255, 0)";
+            }
+            else{
+              code.style.border = "5px ridge black"
+            }
+          }
+          catch(e){}
+          progfocus = this
+          progfocus.style.border="5px ridge rgb(0, 25, 255)";
+        }
+        console.log(progneedblocks[progi], progi)
+      }
+      contextmenublocks = document.getElementById("code").getElementsByClassName("clickblock");
+      for(progi=0;progi<contextmenublocks.length;progi++){
+        contextmenublocks[progi].addEventListener("contextmenu",  function(){
+          event.stopPropagation();
+          event.preventDefault();
+          console.log(this.className)
+          focus = this;
+          menu = document.getElementById("menu");
+          menu.style.top = event.pageY+"px";
+          menu.style.left = event.pageX+"px";
+          menu.style.display = "inline-block"
+        });
+        //f
+        contextmenublocks[progi].addEventListener("touchmove",  function(){
+          event.stopPropagation();
+          event.preventDefault();
+          console.log(this.className)
+          focus = this;
+          menu = document.getElementById("menu");
+          menu.style.top = event.pageY+"px";
+          menu.style.left = event.pageX+"px";
+          menu.style.display = "inline-block"
+        });
+        console.log(contextmenublocks)
+        console.log(contextmenublocks[progi], progi, contextmenublocks)
+        
+      }
+      inputsopen = document.getElementById("code").getElementsByClassName("input");
+      for(inputnum = 0;inputnum<inputsopen.length;inputnum++){
+        inputsopen[inputnum].addEventListener("click", function(e){
+            e.stopPropagation();
+            let element = this;
+            inputfocus(this);
+          })
+        inputsopen[inputnum].addEventListener("mousemove", function(){
+          document.getElementById("imgview").src = this.innerText;
+          document.getElementById("imgview").style.position = "absolute"
+          document.getElementById("imgview").style.top = event.pageY+"px";
+          document.getElementById("imgview").style.left = event.pageX+"px";
+        })
+        inputsopen[inputnum].addEventListener("mouseout", function(){
+          document.getElementById("imgview").src = "";
+        });
+      }
+  }
+  function openfilemenu(){
+    document.body.removeChild(filemenu);
+    opencode = localStorage["file$"+options.value];
+    document.getElementById("code").innerHTML = opencode;
+    setTimeout(applyformat, 500);
+  }
+  function openfileclick(){
+    try{
+      document.body.removeChild(filemenu);
+    }
+    catch(e){}
+    try{
+      document.body.removeChild(savemenu);
+    }
+    catch(e){}
+    localStorage["bob"]= "<h1>adg</h1>"
+    filemenu = document.createElement("div");
+    filemenu.className = "filechooseopt"
+    options = document.createElement("select");
+    options.className = "filechoose"
+    files = [];
+    for(i in localStorage){
+      files.push(i)
+    }
+    files = files.filter(file=>file.startsWith("file$"));
+    for(i in files){
+      option = document.createElement("option");
+      option.innerText = files[i].replace("file$", "");
+      options.appendChild(option)
+    }
+    filemenu.appendChild(options);
+    openbutton = document.createElement("button");
+    openbutton.innerHTML = "open"
+    openbutton.className = "filechoose"
+    openbutton.addEventListener("click", function(){openfilemenu()});
+    filemenu.appendChild(openbutton);
+    document.body.appendChild(filemenu)
+  }
+  addEventListener("keydown", function(evt){
+    if(evt.key=="Escape"){
+      try{
+        document.body.removeChild(filemenu);
+      }
+      catch(e){}
+      try{
+        document.body.removeChild(savemenu);
+      }
+      catch(e){}
+    }
+  })
+  variableinputfocus = null;
+  codeToRun = "";
+  progfocus = document.getElementById("code");
+  evalCode = "afgdae"
+  function moveDown(){
+    move = focus;
+    while(move.className == "input" || move.className == "par" || move.className == "block"){
+      move = move.parentNode;
+    }
+    codeParent = progfocus;
+    if(codeParent.innerHTML == "<br>"){
+      codeParent.innerHTML = "";
+    }
+    codeParent.appendChild(move);
+  }
+  function duplicate(){
+    console.log("duplicate")
+    move = focus;
+    while(move.className == "input" || move.className == "par" || move.className == "block"){
+      move = move.parentNode;
+    }
+    clone = move.cloneNode(true);
+    codeParent = progfocus
+    codeParent.appendChild(clone);
+    document.getElementById("code").innerHTML = document.getElementById("code").innerHTML;
+    applyformat()
+  }
+  function moveUp(){
+    move = focus;
+    while(move.className == "input" || move.className == "par" || move.className == "block"){
+      move = move.parentNode;
+    }
+    codeParent = progfocus
+    if(codeParent.innerHTML == "<br>"){
+      codeParent.innerHTML = "";
+    }
+    codeParent.prepend(move);
+  }
+  function moveOneUp(){
+    move = focus;
+    while(move.className == "input" || move.className == "par" || move.className == "block"){
+      move = move.parentNode;
+    }
+    move.parentNode.insertBefore(move, move.previousElementSibling);
+  }
+  function moveOneDown(){
+    move = focus;
+    while(move.className == "input" || move.className == "par" || move.className == "block"){
+      move = move.parentNode;
+    }
+    move.parentNode.insertBefore(move.nextElementSibling, move);
+  }
+  function removeblock(){
+    if(focus.className == "input"){
+      focus.innerHTML = "";
+      return 0;
+    }
+    focus.parentNode.removeChild(focus)
+  }
+   function sleep(ms) {
+      
+   }
+   focus = null;
+  function addBlock(div){
+    clone = div.cloneNode(true);
+    code = document.getElementById("code");
+    clone = document.createElement("div");
+    clone.className="clickblock"
+    clone.innerHTML += div.innerHTML;
+    clone.innerHTML += ""
+    if(progfocus.innerHTML=="<br>"){
+      progfocus.innerHTML = "";
+    }
+    progfocus.appendChild(clone)
+    try{
+    if(progfocus!=code){
+      progfocus.children[5].innerHTML+="<br>"
+    }
+    }
+    catch(e){}
+    clone.focus();
+    for(i=0;i<clone.children[0].children[1].children.length;i++){
+      clone.children[0].children[1].children[i].onclick = function(){
+        inputfocus(this)
+      }
+    }
+    for(i=0;i<clone.children[0].children[1].children.length;i++){
+      clone.children[0].children[1].children[i].onmousemove = function(){
+        document.getElementById("imgview").style.display = "block";
+        document.getElementById("imgview").src = this.innerText;
+        document.getElementById("imgview").style.position = "absolute"
+        document.getElementById("imgview").style.top = event.pageY+"px";
+        document.getElementById("imgview").style.left = event.pageX+"px";
+      }
+    }
+    for(i=0;i<clone.children[0].children[1].children.length;i++){
+      clone.children[0].children[1].children[i].onmouseout = function(){
+        document.getElementById("imgview").style.display = "none";
+        document.getElementById("imgview").src = "";
+      }
+    }
+    clone.addEventListener("contextmenu", function(){
+      event.stopPropagation();
+      event.preventDefault();
+      console.log(this.className)
+      focus = this;
+      menu = document.getElementById("menu");
+      menu.style.top = event.pageY+"px";
+      menu.style.left = event.pageX+"px";
+      menu.style.display = "inline-block"
+    })
+    clone.addEventListener("touchmove", function(){
+      event.stopPropagation();
+      event.preventDefault();
+      console.log(this.className)
+      focus = this;
+      menu = document.getElementById("menu");
+      menu.style.top = event.pageY+"px";
+      menu.style.left = event.pageX+"px";
+      menu.style.display = "inline-block"
+    })
+  }
+  function addProg(div){
+    clone = div.cloneNode(true);
+    code = document.getElementById("code");
+    clone = document.createElement("div");
+    clone.className="clickblock"
+    clone.innerHTML = div.innerHTML;
+    clone.innerHTML += "<br>"
+    if(progfocus.innerHTML=="<br>"){
+      progfocus.innerHTML = "";
+    }
+    progfocus.appendChild(clone)
+    clone.focus();
+    for(i=0;i<clone.children[0].children[1].children.length;i++){
+      clone.children[0].children[1].children[i].onclick = function(){
+      event.stopPropagation();
+      event.preventDefault();
+        inputfocus(this)
+      }
+    }
+    clone.children[0].children[2].onclick = function(){
+          event.stopPropagation();
+          event.preventDefault();
+          console.log(this)
+          try{
+            if(progfocus!=code){
+              progfocus.style.border="5px solid rgb(0, 255, 0)";
+            }
+            else{
+              code.style.border = "5px solid black"
+            }
+          }
+          catch(e){}
+          progfocus = this
+          console.log(progfocus)
+          progfocus.style.border="5px solid rgb(0, 25, 255)";
+      }
+    clone.addEventListener("contextmenu", function(){
+      event.preventDefault();
+      event.stopPropagation();
+      focus = this;
+      console.log(this.className)
+      menu = document.getElementById("menu");
+      menu.style.top = event.pageY+"px";
+      menu.style.left = event.pageX+"px";
+      menu.style.display = "inline-block"
+    })
+    clone.addEventListener("touchmove", function(){
+      event.preventDefault();
+      event.stopPropagation();
+      focus = this;
+      console.log(this.className)
+      menu = document.getElementById("menu");
+      menu.style.top = event.pageY+"px";
+      menu.style.left = event.pageX+"px";
+      menu.style.display = "inline-block"
+    })
+  }
+  function addEvalBlock(div){
+    clone = div.cloneNode(true);
+    code = document.getElementById("code");
+    clone = document.createElement("div");
+    clone.className="clickblock"
+    clone.innerHTML = div.innerHTML;
+    clone.innerHTML += ""
+    variableinputfocus.innerHTML = "";
+    variableinputfocus.appendChild(clone)
+    clone.focus();
+    cloneelems = clone.children[0].children
+    for(let i = 0; i< cloneelems.length; i++){
+      if(cloneelems[i].className=="par"){
+        for(let parI=0; parI < cloneelems[i].children.length; parI++){
+          cloneelems[i].children[parI].onclick = function(e){
+            e.stopPropagation();
+            let element = this;
+            inputfocus(this);
+          }
+        }
+      }
+    }
+    variableinputfocus.addEventListener("contextmenu", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      focus = this;
+      console.log(this.className)
+      menu = document.getElementById("menu");
+      menu.style.top = event.pageY+"px";
+      menu.style.left = event.pageX+"px";
+      menu.style.display = "inline-block"
+    })
+    variableinputfocus.addEventListener("touchmove", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      focus = this;
+      console.log(this.className)
+      menu = document.getElementById("menu");
+      menu.style.top = event.pageY+"px";
+      menu.style.left = event.pageX+"px";
+      menu.style.display = "inline-block"
+    })
+    clone.contentEditable = "false"
+  }
+  codeblock = document.getElementById("code")
+  codeblock.innerHTML += `
+  <span class = "varinp">
+    
+  </span>
+  `
+  function inputfocus(elem){
+    try{
+      variableinputfocus.style.border="5px solid white";
+    }
+    catch(e){}
+    variableinputfocus = elem;
+    variableinputfocus.style.border="5px solid rgb(0, 255, 0)";
+  }
+  function newEvalBlock(name, pars){
+    blocks = document.getElementById("madeBlocks");
+    parinpcode = `
+<span contenteditable = "true" class = "input"></span>
+    `.repeat(pars);
+    blocks.innerHTML += `
+    <br>
+<div class="evalblock" id = "madeBlocks" 
+onclick = "addEvalBlock(this)">
+	<div class="evalblock">
+    <span class = "name">${name}</span>
+    <span class = "par">${parinpcode}</span>
+  </div>
+</div>
+<br>
+    `
+  }
+  function newBlock(name, pars){
+    blocks = document.getElementById("madeBlocks");
+    parinpcode = `
+<span contenteditable = "true" class = "input"></span>
+    `.repeat(pars);
+    blocks.innerHTML += `
+    <br>
+<div class="blocks" id = "madeBlocks" 
+onclick = "addBlock(this)">
+	<div class="block">
+    <span class = "name">${name}</span>
+    <span class = "par">${parinpcode}</span>
+  </div>
+</div>
+<br>
+    `
+  }
+  function newProgBlock(name, pars){
+    blocks = document.getElementById("madeBlocks");
+    parinpcode = `
+<span contenteditable = "true" class = "input"></span>
+    `.repeat(pars);
+    blocks.innerHTML += `
+    <br>
+<div class="blocks" id = "madeBlocks" 
+onclick = "addProg(this);">
+	<div class="needProg">
+    <span class = "name">${name}</span>
+    <span class = "par">${parinpcode}</span>
+    <div class = "prog"><br></div>
+  </div>
+</div>
+<br><br>
+    `
+  }
+</script>
+<script>
+  function format(element){
+    let name = "";
+    let par = []
+    if(element==undefined){
+      return 0;
+    }
+    for(let elemi=0;elemi<element.children.length;elemi++){
+      let info = element.children[elemi];
+      if(info.className == "name"){
+        name = info.innerText;
+      }
+      if(info.className == "par"){
+        for(let x=0;x<info.children.length;x++){
+          if(info.children[x].children.length != 0){
+            let needtoeval = format(info.children[x].children[0].children[0]);
+            let parpush = evalBlock(needtoeval)
+            console.log(needtoeval)
+            if(parpush!=undefined){
+              par.push(evalCode+"("+parpush+")")
+            }
+            else{
+              par.push(info.children[x].innerText)
+            }
+          }
+          else{
+            par.push(info.children[x].innerText);
+          }
+        }
+      }
+    }
+    if(element.className=="needProg"){
+      return [name, par, element.children[2]]
+    }
+    return [name, par]
+  }
+  document.body.onclick = function(){
+    menu.style.display = "none"
+    focus = null;
+  }
+  function run(){
+    loopId=0;
+    codeToRun = defaultCode;
+    code = document.getElementById("code");
+    name = "";
+    for(let index=0;index<document.getElementById("code").children.length;index++){
+      out = format(document.getElementById("code").children[index].children[0])
+      addCode(execute(out))
+    }
+    addCode("};\nNotification.requestPermission();\nmouseX=0;mouseY=0;\ndocument.addEventListener('mousemove', (event) => {var mouseX=event.clientX;var mouseY=event.clientY});<\/script>")
+    document.getElementById("resultdiv").innerHTML = "";divresultnew=document.createElement("iframe");
+    divresultnew.id="result";
+    document.getElementById("resultdiv").appendChild(divresultnew)
+    document.getElementById("result").contentWindow.document.write(codeToRun)
+  }
+  function runCodeByProg(elem){
+    code = document.getElementById("code");
+    name = "";
+    for(let index=0;index<elem.children.length;index++){
+      out = format(elem.children[index].children[0])
+      addCode(execute(out))
+    }
+  }
+  function addCode(x){
+    codeToRun += x+"\n";
+  }
+  function json_string(inp){
+    try{
+      if(inp.startsWith(evalCode)){
+        return inp.replace(evalCode, "")
+      }
+    }
+    catch(e){
+    }
+    return JSON.stringify(inp)
+  }
+  function string(i){
+    return JSON.stringify(i);
+  }
+  function toType(inpx){
+    if(!isNaN(inpx)){
+      return parseFloat(inpx)
+    }
+    return inpx;
+  }
+  function specialEvalBlock(x){
+    blocks = document.getElementById("madeBlocks");
+    blocks.innerHTML += `
+    <br>
+<div class="evalblock" id = "madeBlocks" 
+onclick = "addEvalBlock(this)">
+	<div class="evalblock">
+    ${x}
+  </div>
+</div>
+<br>
+    `
+  }
+</script>
+<!--______________________________________________________________________________-->
+<script>
+  defaultCode = 
+` <style>
+  #title{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-family: Charcoal, sans-serif;
+    font-size: 50px;
+    transform: translate(-50%, -50%);
+  }
+  .character{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .say{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opactity: 1.0;
+    transform: translate(-50%, -50%);
+    font-family: Charcoal, sans-serif;
+    border-radius: 25px;
+    border: 2px solid black;
+    font-size: 15px;
+    font-family: consolas;
+    background-color: white;
+  }
+  body{
+    background-size: cover;
+    overflow-x: hidden;
+  }
+  </style>
+  <body>
+  </body>
+  <script>
+  variables = {};
+  errors = "";
+  functions = {};
+  characters = {};
+  keys = {};
+    window.onkeydown = function(){keys[event.key]=true};window.onkeyup = function(){keys[event.key]=false};
+  function getChar(c){
+    return characterarr[characters[c]];
+  }
+  onmousemove = function(){
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+  }
+  function distance(i1, i2){
+    x1 = parseInt(i1.style.left);
+    x2 = parseInt(i2.style.left);
+    y1 = parseInt(i1.style.top);
+    y2 = parseInt(i2.style.top);
+    return parseInt(Math.sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1-y2)));
+  }
+  async function getPos(){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      window.p = pos.coords;
+    })
+    await sleep(300);
+    return window.p;
+  }
+  function rand(low, high){
+    return parseInt(low+Math.random()*(high-low));
+  }
+  window.addEventListener("deviceorientation", handler, true);
+  function handler(e) {
+    compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+  }
+  function isTouch(i1, i2){
+    x1 = parseInt(i1.style.left);
+    x2 = parseInt(i2.style.left);
+    y1 = parseInt(i1.style.top);
+    y2 = parseInt(i2.style.top);
+    xdiff = Math.abs(x1-x2);
+    ydiff = Math.abs(y1-y2);
+    widthtotal = parseInt(i1.style.width)+parseInt(i2.style.width);
+    heighttotal = parseInt(i1.style.height)+parseInt(i2.style.height);
+    return (xdiff<(widthtotal/2) && ydiff<(heighttotal/2));
+  }
+  console.log(getChar)
+  characterarr = [];
+  characterhighid = 0;
+  const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+  }
+  setTimeout(function(){main()}, 100)
+  <\/script>
+  `
+  defaultCode += `<script>async function main(){\n`
+  newBlock("title", 1);
+  newBlock("sleep", 1);
+  newBlock("new character", 2);
+  newBlock("new text character", 2);
+  newBlock("move character", 3);
+  newBlock("set variable", 2);
+  newBlock("play audio", 1)
+  newBlock("say", 2);
+  newBlock("background", 1);
+  newBlock("set size", 3);
+  newBlock("set text size", 2);
+  newBlock("change text", 2);
+  newBlock("rotate", 2);
+  newBlock("set variable", 2);
+  newBlock("change character x", 2);
+  newBlock("change character y", 2);
+  newBlock("change character image", 2);
+  newBlock("change variable", 2);
+  newBlock("speak", 1)
+  newBlock("show notification", 1)
+  newBlock("add to list", 2)
+  newBlock("run my block", 1);
+  newBlock("change layer", 2);
+  newEvalBlock("get longitude", 0);
+  newEvalBlock("get latitude", 0);
+  newEvalBlock("get list item", 2)
+  newEvalBlock("add", 2);
+  newEvalBlock("subtract", 2);
+  newEvalBlock("divide", 2);
+  newEvalBlock("mulitply", 2);
+  newEvalBlock("modulo", 2);
+  newEvalBlock("random", 2);
+  newEvalBlock("distance", 2);
+  newEvalBlock("is touching", 2);
+  newEvalBlock("screen height", 0);
+  newEvalBlock("screen width", 0);
+  newEvalBlock("get x of", 1);
+  newEvalBlock("get y of", 1);
+  newEvalBlock("new list", 0);
+  newEvalBlock("is key down", 1);
+  newEvalBlock("atan2", 2);
+  newEvalBlock("abs", 1);
+  newEvalBlock("sin", 1);
+  newEvalBlock("cos", 1);
+  newEvalBlock("mouse x", 0);
+  newEvalBlock("mouse y", 0);
+  newEvalBlock("cos", 1);
+  newEvalBlock("sin", 1);
+  newEvalBlock("get second", 0);
+  newEvalBlock("get minute", 0);
+  newEvalBlock("get hour", 0);
+  newEvalBlock("get point direction", 2)
+  newEvalBlock("compass direction", 0)
+  specialEvalBlock(`
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>
+  <span class = "name">equals</span> 
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>`);
+  specialEvalBlock(`
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>
+  <span class = "name">less than</span> 
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>`);
+  specialEvalBlock(`
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>
+  <span class = "name">greater than</span> 
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>`);
+  specialEvalBlock(`
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>
+  <span class = "name">or</span> 
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>`);
+  specialEvalBlock(`
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>
+  <span class = "name">and</span> 
+  <span class = "par"><span contenteditable = "true" class = "input"></span></span>`);
+  newEvalBlock("get variable", 1);
+  newEvalBlock("length of list", 1);
+  newBlock("print", 1);
+  newProgBlock("repeat", 1)
+  newProgBlock("keypress", 1)
+  newProgBlock("if", 1)
+  newProgBlock("forever", 0);
+  newProgBlock("loop through list", 2);
+  newProgBlock("define", 1);
+  newProgBlock("background process", 0);
+  newProgBlock("repeat until", 1);
+  newProgBlock("on character click", 1);
+  function evalBlock(info){
+    let name = info[0]
+    let parameter = info[1]
+    if(name == "get point direction"){
+      return `Math.atan2(parseInt(getChar(${json_string(toType(parameter[1]))}).style.top)-parseInt(getChar(${json_string(toType(parameter[0]))}).style.top), parseInt(getChar(${json_string(toType(parameter[1]))}).style.left)-parseInt(getChar(${json_string(toType(parameter[0]))}).style.left))*(180/Math.PI)-90`
+    }
+    if(name == "add"){
+      return `${json_string(toType(parameter[0]))}+${json_string(toType(parameter[1]))}`;
+    }
+    if(name == "subtract"){
+      return `${json_string(toType(parameter[0]))}-${json_string(toType(parameter[1]))}`;
+    }
+    if(name == "divide"){
+      return `${json_string(toType(parameter[0]))}/${json_string(toType(parameter[1]))}`;
+    }
+    if(name == "abs"){
+      return `Math.abs(${json_string(toType(parameter[0]))})`;
+    }
+    if(name == "mulitply"){
+      return `${json_string(toType(parameter[0]))}*${json_string(toType(parameter[1]))}`;
+    }
+    if(name == "modulo"){
+      return `${json_string(toType(parameter[0]))}%${json_string(toType(parameter[1]))}`;
+    }
+    if(name == "sin"){
+      return `Math.sin(${json_string(toType(parameter[0]))})`
+    }
+    if(name == "cos"){
+      return `Math.cos(${json_string(toType(parameter[0]))})`
+    }
+    if(name == "random"){
+      return `rand(${json_string(toType(parameter[0]))}, ${json_string(toType(parameter[1]))})`;
+    }
+    if(name == "atan2"){
+      return `Math.atan2(${json_string(toType(parameter[0]))}, ${json_string(toType(parameter[1]))})`;
+    }
+    if(name == "get variable"){
+      return `variables[${json_string(parameter[0])}]`
+    }
+    if(name == "get list item"){
+      return `variables[${json_string(parameter[0])}][parseInt(${json_string(parameter[1])})]`
+    }
+    if(name == "length of list"){
+      return `variables[${json_string(parameter[0])}].length`
+    }
+    if(name == "mouse x"){
+      return `mouseX`
+    }
+    if(name == "mouse y"){
+      return `mouseY`
+    }
+    if(name == "equals"){
+      return `${json_string(toType(parameter[0]))}==${json_string(toType(parameter[1]))}`
+    }
+    if(name == "less than"){
+      return `${json_string(toType(parameter[0]))}<${json_string(toType(parameter[1]))}`
+    }
+    if(name == "greater than"){
+      return `${json_string(toType(parameter[0]))}>${json_string(toType(parameter[1]))}`
+    }
+    if(name == "or"){
+      return `${json_string(toType(parameter[0]))} || ${json_string(toType(parameter[1]))}`
+    }
+    if(name == "and"){
+      return `${json_string(toType(parameter[0]))} && ${json_string(toType(parameter[1]))}`
+    }
+    if(name == "distance"){
+      return `distance(getChar(${json_string(parameter[0])}), getChar(${json_string(parameter[1])}))`
+    }
+   if(name == "is touching"){
+      return `isTouch(getChar(${json_string(parameter[0])}), getChar(${json_string(parameter[1])}))`
+    }
+    if(name == "screen height"){
+      return `window.innerHeight`;
+    }
+    if(name == "screen width"){
+      return `window.innerWidth`;
+    }
+    if(name == "get x of"){
+      return `parseInt(getChar(${json_string(parameter[0])}).style.left)`;
+    }
+    if(name == "get y of"){
+      return `parseInt(getChar(${json_string(parameter[0])}).style.top)`;
+    }
+    if(name == "new list"){
+      return `[]`
+    }
+    if(name == "is key down"){
+      return `(keys[${json_string(parameter[0])}])?true:false`;
+    }
+    if(name == "sin"){
+      return `Math.sin(${json_string(parameter[0])})`
+    }
+    if(name == "cos"){
+      return `Math.cos(${json_string(parameter[0])})`
+    }
+    if(name == "get latitude"){
+      navigator.geolocation.getCurrentPosition(() => {})
+      return `(await getPos()).latitude`;
+    }
+    if(name == "get longitude"){
+      navigator.geolocation.getCurrentPosition(() => {})
+      return `(await getPos()).longitude`;
+    }
+    if(name == "get second"){
+      return `new Date().getSeconds()`;
+    }
+    if(name == "get hour"){
+      return `new Date().getHours()`;
+    }
+    if(name == "get minute"){
+      return `new Date().getMinutes()`;
+    }
+    if(name == "compass direction"){
+      return `compass`
+    }
+  }
+  function execute(info){
+    let name = info[0]
+    let par = info[1]
+    let programIn = info[2]
+    console.log(name, par)
+    if(name == "title"){
+      return `
+      try{
+        document.body.removeChild(title)
+      }
+      catch(e){};
+      title = document.createElement('div');
+      title.innerHTML = ${json_string(par[0])};
+      title.id = "title";
+      document.body.appendChild(title)`;
+    }
+    if(name == "sleep"){
+      return `await sleep(parseInt(${json_string(par[0])}*1000));`
+    }
+    if(name == "new character"){
+      return `
+      img = document.createElement("img");
+      characters[${json_string(par[0])}] = characterhighid;
+      img.className = "character";
+      img.src = ${json_string(par[1])};
+      img.style.width = img.naturalWidth;
+      img.style.height = img.naturalHeight;
+      document.body.appendChild(img);
+      for(i=0;i<20;i++){
+        if(img.style.width=="0px" || img.style.height=="0px"){
+          img.src = ${json_string(par[1])};
+          img.style.width = img.naturalWidth;
+          img.style.height = img.naturalHeight;
+          console.log(img.style.width, img.style.height);
+        }
+      }
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      img.style.top = h/2+"px";
+      img.style.left = w/2+"px";
+      name = ${json_string(par[0])}
+      characters[name] = characterhighid;
+      characterhighid++
+      characterarr.push(img)
+      `
+    }
+    if(name == "new text character"){
+      return `
+      text = document.createElement("pre");
+      characters[${json_string(par[0])}] = characterhighid;
+      text.className = "character";
+      document.body.appendChild(text);
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      text.style.top = h/2+"px";
+      text.style.left = w/2+"px";
+      characters[name] = characterhighid;
+      characterhighid++
+      characterarr.push(text)
+      text.innerHTML=${json_string(par[1])};
+      `
+    }
+    if(name == "move character"){
+        return `
+        char = getChar(${json_string(par[0])});
+        char.style.top = ${json_string(par[2])}+"px"
+        char.style.left = ${json_string(par[1])}+"px"
+        `
+    }
+    if(name == "change layer"){
+        return `
+        char = getChar(${json_string(par[0])});
+        char.style.zIndex = ${json_string(par[1])}+"";
+        `
+    }
+    if(name == "change character x"){
+        return `
+        char = getChar(${json_string(par[0])});
+        char.style.left = parseInt(char.style.left) + parseInt(${json_string(par[1])})+"px"
+        `
+    }
+    if(name == "change character y"){
+        return `
+        char = getChar(${json_string(par[0])});
+        char.style.top = parseInt(char.style.top) + parseInt(${json_string(par[1])})+"px"
+        `
+    }
+    if(name == "change character image"){
+        return `
+        char = getChar(${json_string(par[0])});
+        char.src = ${json_string(par[1])};
+        `
+    }
+    if(name == "set variable"){
+      return `variables[${json_string(par[0])}]=${json_string(toType(par[1]))};`
+    }
+    if(name == "change variable"){
+      return `variables[${json_string(par[0])}]+=${json_string(toType(par[1]))}`
+    }
+    if(name == "add to list"){
+      return `variables[${json_string(par[0])}].push(${json_string(toType(par[1]))});`
+    }
+    if(name == "speak"){
+      return `
+      utterance = new SpeechSynthesisUtterance(${json_string(par[0])});
+      speechSynthesis.speak(utterance);
+`;
+    }
+    if(name == "say"){
+      return `
+      char = getChar(${json_string(par[0])});
+      try{
+        document.body.removeChild(text)
+      }
+      catch(e){}
+      text = document.createElement("span");
+      text.innerText = "   "+${json_string(par[1])}+"   ";
+      text.className = "say";
+      minusy = char.style.height.replace("px", "");
+      if(minusy == ""){
+        console.log(char.naturalHeight)
+        minus=char.naturalHeight;
+      }
+      console.log(char.style)
+      minusy = parseInt(minusy)/2; 
+      text.style.top = parseInt(char.style.top.replace("px", ""))-minusy;
+      text.style.left = char.style.left;
+      if(text.style.top == ""){
+        text.style.top = "50%"
+      }
+      if(text.style.left == ""){
+        text.style.left = "50%"
+      }
+      document.body.appendChild(text)
+      await sleep(2000);
+      text.parentNode.removeChild(text);
+      `
+    }
+    if(name == "background"){
+      return `document.body.style.backgroundImage ="url("+${json_string(par[0])}+")"`
+    }
+    if(name == "set size"){
+      return `
+        char = getChar(${json_string(par[0])});
+        char.style.width = ${json_string(par[2])}+"px"
+        char.style.height = ${json_string(par[1])}+"px"
+        `
+    }
+    if(name == "set text size"){
+      return `
+        char = getChar(${json_string(par[0])});
+        char.style.fontSize  = ${json_string(par[1])}+"px"
+        `
+    }
+    if(name == "change text"){
+      return `
+        char = getChar(${json_string(par[0])});
+        char.innerText  = ${json_string(par[1])};
+        `
+    }
+    if(name == "rotate"){
+      return `
+      char = getChar(${json_string(par[0])});
+      char.style.transform = "rotate("+${json_string(par[1])}+"deg)"`;
+    }
+    if(name == "repeat"){
+      addCode(`for(let loopnum${loopId}=0;loopnum${loopId}<parseInt(${json_string(par[0])});loopnum${loopId}++){`)
+      loopId++;
+        runCodeByProg(programIn)
+      addCode(`}`);
+    }
+    if(name == "play audio"){
+      return `
+        a = new Audio(${json_string(par[0])});
+        a.play();
+        await sleep(1);
+        console.log(a.duration)
+        await sleep(a.duration)
+    `
+    }
+    if(name == "show notification"){
+      return `new Notification(${json_string(par[0])})`
+    }
+    if(name == "loop through list"){
+      addCode(`for(let loopnum${loopId}=0;
+      loopnum${loopId}<variables[${json_string(par[0])}].length;
+      loopnum${loopId}++){
+      variables[${json_string(par[1])}]=variables[${json_string(par[0])}][loopnum${loopId}]`)
+      loopId++;
+      runCodeByProg(programIn)
+      addCode(`}`);
+    }
+    if(name == "forever"){
+      addCode(`while(true){`)
+      runCodeByProg(programIn)
+      addCode(`await sleep(0.001);}`);
+    }
+    if(name == "print"){
+      return `console.log(${json_string(par[0])})`
+    }
+    if(name == "keypress"){
+      addCode(`
+      addEventListener("keydown", async function(event){
+        if(event.key == ${json_string(par[0])}){
+          `)
+      runCodeByProg(programIn)
+      addCode(`
+        }
+      });`)
+    }
+    if(name == "if"){
+      addCode(`
+        if(${json_string(par[0])}){
+          `)
+      runCodeByProg(programIn)
+      addCode(`
+      };`)
+    }
+    if(name == "repeat until"){
+      addCode(`while(${json_string(par[0])}){`)
+      runCodeByProg(programIn)
+      addCode(`await sleep(0.001);}`);
+    }
+    if(name == "define"){
+      addCode(`
+      functions[${json_string(par[0])}] = async function(){
+      `)
+      runCodeByProg(programIn)
+      addCode(`
+      };`)
+    }
+    if(name == "run my block"){
+      return `functions[${json_string(par[0])}]()`;
+    }
+    if(name == "background process"){
+      addCode(`setTimeout(async function(){`)
+      runCodeByProg(programIn)
+      addCode(`}, 10)`);
+    }
+    if(name == "on character click"){
+      addCode(`
+      getChar(${json_string(par[0])}).addEventListener("click", async function(event){`)
+      runCodeByProg(programIn)
+      addCode(`
+      });`)
+    }
+  }
+</script>
